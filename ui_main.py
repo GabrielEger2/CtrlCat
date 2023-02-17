@@ -238,7 +238,7 @@ class Ui_MainWindow(object):
         self.SQL_Table.horizontalHeader().setHighlightSections(True)
         self.SQL_Table.horizontalHeader().setProperty("showSortIndicator", False)
         self.SQL_Table.setColumnWidth(0, 233)
-        self.SQL_Table.setColumnWidth(1, 94)
+        self.SQL_Table.setColumnWidth(1, 72)
 
         self.verticalLayout.addWidget(self.SQL_Table)
 

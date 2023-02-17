@@ -3,6 +3,7 @@ import webbrowser
 
 # Importing user interface file
 from ui_main import Ui_MainWindow
+from ui_main import Ui_Settings
 
 # Importing classes from PySide6 modules
 from PySide6.QtCore import QDate
@@ -28,7 +29,15 @@ class Window(QMainWindow):
         self.ui.actionCreator_Github.triggered.connect(self.acess_creator_github)
         self.ui.actionProgram_GitHub.triggered.connect(self.acess_project_github)
         self.ui.actionSupport_me.triggered.connect(self.acess_support)
+        self.ui.actionCtrl_C_config.triggered.connect(self.open_settings)
     
+    # Open config file
+    def open_settings(self):
+        self.window = QMainWindow()
+        self.settings = Ui_Settings()
+        self.settings.setupUi(self.window)
+        self.window.show()
+
     # Method to create the table in the database
     def create_table(self):
         # Connecting to the database

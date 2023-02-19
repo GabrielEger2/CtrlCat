@@ -137,9 +137,41 @@ class Ui_MainWindow(object):
 "QPushButton::pressed {\n"
 "    background-color: rgb(85, 170, 255);\n"
 "	color: rgb(0, 0, 0);\n"
-"}")
-        self.actionCtrl_C_config = QAction(MainWindow)
-        self.actionCtrl_C_config.setObjectName(u"actionCtrl_C_config")
+"}\n"
+"\n"
+"QScrollBar:horizontal,\n"
+"QScrollBar:vertical {\n"
+"    background: transparent;\n"
+"    width: 20px;\n"
+"    margin: 20px 0 20px 0;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:horizontal,\n"
+"QScrollBar::handle:vertical {\n"
+"    background: #555;\n"
+"    min-height: 20px;\n"
+"}\n"
+"\n"
+"QScrollBar::add-line:horizontal,\n"
+"QScrollBar::add-line:vertical {\n"
+"    border: none;\n"
+"    background: none;\n"
+"}\n"
+"\n"
+"QScrollBar::sub-line:horizontal,\n"
+"QScrollBar::sub-line:vertical {\n"
+"    border: none;\n"
+"    background: none;\n"
+"}\n"
+"\n"
+"QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal,\n"
+"QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {\n"
+"    background:"
+                        " none;\n"
+"}\n"
+"")
+        self.Settings = QAction(MainWindow)
+        self.Settings.setObjectName(u"Settings")
         self.actionCtrl_V_config = QAction(MainWindow)
         self.actionCtrl_V_config.setObjectName(u"actionCtrl_V_config")
         self.actionProgram_GitHub = QAction(MainWindow)
@@ -238,7 +270,7 @@ class Ui_MainWindow(object):
         self.SQL_Table.horizontalHeader().setHighlightSections(True)
         self.SQL_Table.horizontalHeader().setProperty("showSortIndicator", False)
         self.SQL_Table.setColumnWidth(0, 233)
-        self.SQL_Table.setColumnWidth(1, 72)
+        self.SQL_Table.setColumnWidth(1, 80)
 
         self.verticalLayout.addWidget(self.SQL_Table)
 
@@ -263,7 +295,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuAbout.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
-        self.menuSettings.addAction(self.actionCtrl_C_config)
+        self.menuSettings.addAction(self.Settings)
         self.menuSettings.addAction(self.actionClose_2)
         self.menuAbout.addAction(self.actionProgram_GitHub)
         self.menuAbout.addAction(self.actionCreator_Github)
@@ -276,7 +308,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"CtrlCat", None))
-        self.actionCtrl_C_config.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
+        self.Settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.actionCtrl_V_config.setText(QCoreApplication.translate("MainWindow", u"Ctrl+V Config", None))
         self.actionProgram_GitHub.setText(QCoreApplication.translate("MainWindow", u"Program's GitHub", None))
         self.actionCreator_Github.setText(QCoreApplication.translate("MainWindow", u"Creator's Github", None))

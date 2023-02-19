@@ -11,7 +11,7 @@ from PySide6.QtCore import QDate
 from PySide6 import QtWidgets
 
 # Importing classes from PySide6 modules
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidget
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem
 
 # Importing SQLite3 module for database operations
 import sqlite3
@@ -29,12 +29,16 @@ class Window(QMainWindow):
 
         QApplication.clipboard().dataChanged.connect(self.save_copy)
 
+        self.ui.SQL_Table.clicked.connect(self.load_copy)
         self.ui.actionCreator_Github.triggered.connect(self.acess_creator_github)
         self.ui.actionProgram_GitHub.triggered.connect(self.acess_project_github)
         self.ui.actionSupport_me.triggered.connect(self.acess_support)
         self.ui.menuHelp.triggered.connect(self.acess_help)
-        self.ui.actionCtrl_C_config.triggered.connect(self.open_settings)
+        self.ui.Settings.triggered.connect(self.open_settings)
         self.ui.actionClose_2.triggered.connect(self.close_application)
+        self.ui.EditButton.clicked.connect(lambda: self.update_copy(self.row))
+
+        self.last_copied_text = ''
 
     # Method to create the table in the database
     def create_table(self):
@@ -64,14 +68,42 @@ class Window(QMainWindow):
     
     def save_copy(self):
         text = QApplication.clipboard().text()
-        if text:
+        if text and text != self.last_copied_text:
+            self.last_copied_text = text
             date = datetime.datetime.now().strftime("%Y-%m-%d")
             conn = sqlite3.connect("database.db")
             c = conn.cursor()
             c.execute("INSERT INTO copies (text, date) VALUES (?, ?)", (text, date))
             conn.commit()
             conn.close()
-            self.load_data()
+            # Insert a new row at the top of the table
+            self.ui.SQL_Table.insertRow(0)
+            # Create two new items with the copied text and date, and add them to the new row
+            text_item = QTableWidgetItem(text)
+            date_item = QTableWidgetItem(date)
+            self.ui.SQL_Table.setItem(0, 0, text_item)
+            self.ui.SQL_Table.setItem(0, 1, date_item)
+            # Select the first cell of the new row
+            self.ui.SQL_Table.setCurrentCell(0, 0)
+    
+    def load_copy(self, index):
+        self.row = index.row()
+        text = self.ui.SQL_Table.item(self.row, 0).text()
+        self.ui.copytext.setText(text)
+
+    # Method to update a user to the database and table widget
+    def update_copy(self, index):
+        row = self.row
+        conn = sqlite3.connect("database.db")
+        cursor = conn.cursor()
+        text = self.ui.SQL_Table.item(self.row, 0).text()
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        conn.execute("UPDATE copies SET Text=?, Date=? WHERE ROWID = (SELECT ROWID FROM copies LIMIT 1 OFFSET ?)", (text, date, row))
+        conn.commit()
+        conn.close()
+        print(row)
+        self.load_data()
+        self.load_data()
 
     # Close program
     def close_application(Self):
@@ -89,7 +121,7 @@ class Window(QMainWindow):
     def acess_project_github(self):
         webbrowser.open("https://github.com/GabrielEger2/CtrlCat")
     def acess_support(self):
-        webbrowser.open("https://www.buymeacoffee.com/dashboard")
+        webbrowser.open("https://www.buymeacoffee.com/GabrielEger")
     def acess_help(self):
         webbrowser.open("https://github.com/GabrielEger2/CtrlCat")
     

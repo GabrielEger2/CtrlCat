@@ -1,5 +1,9 @@
 import sys
 import webbrowser
+import pyautogui
+import pyperclip
+import pydirectinput
+import keyboard
 
 # Importing user interface file
 from ui_main import Ui_MainWindow
@@ -7,7 +11,7 @@ from ui_main import Ui_Settings
 
 # Importing classes from PySide6 modules
 from PySide6.QtGui import QKeySequence, QShortcut
-from PySide6.QtCore import QDate
+from PySide6.QtCore import QDate, Qt
 from PySide6 import QtWidgets
 
 # Importing classes from PySide6 modules
@@ -17,6 +21,23 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWid
 import sqlite3
 
 import datetime
+
+def paste_from_sql():
+    # Connect to the database and retrieve the first row of text
+    conn = sqlite3.connect("database.db")
+    c = conn.cursor()
+    c.execute("SELECT text FROM copies LIMIT 1")
+    result = c.fetchone()
+    conn.close()
+
+    if result:
+        # Copy the text to the clipboard
+        pyperclip.copy(result[0])
+        # Simulate a key press of "Ctrl+V" to paste the text
+        pydirectinput.press("v")
+
+# Register a keyboard shortcut (Ctrl+B) that calls the paste_from_sql function
+keyboard.add_hotkey("ctrl+b", paste_from_sql)
 
 # Creating the class for the main window
 class Window(QMainWindow):
@@ -37,6 +58,7 @@ class Window(QMainWindow):
         self.ui.Settings.triggered.connect(self.open_settings)
         self.ui.actionClose_2.triggered.connect(self.close_application)
         self.ui.EditButton.clicked.connect(lambda: self.update_copy(self.row))
+
 
         self.last_copied_text = ''
 
@@ -84,7 +106,7 @@ class Window(QMainWindow):
             self.ui.SQL_Table.setItem(0, 0, text_item)
             self.ui.SQL_Table.setItem(0, 1, date_item)
             # Select the first cell of the new row
-            self.ui.SQL_Table.setCurrentCell(0, 0)
+            self.ui.SQL_Table.setCurrentCell(0, 0)    
     
     def load_copy(self, index):
         self.row = index.row()
@@ -96,7 +118,7 @@ class Window(QMainWindow):
         row = self.row
         conn = sqlite3.connect("database.db")
         cursor = conn.cursor()
-        text = self.ui.SQL_Table.item(self.row, 0).text()
+        text = str(self.ui.copytext.toPlainText())
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         conn.execute("UPDATE copies SET Text=?, Date=? WHERE ROWID = (SELECT ROWID FROM copies LIMIT 1 OFFSET ?)", (text, date, row))
         conn.commit()
@@ -132,3 +154,6 @@ window = Window()
 window.show()
 
 sys.exit(app.exec())
+
+# Start the keyboard listener
+keyboard.wait()
